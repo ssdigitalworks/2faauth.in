@@ -1,0 +1,113 @@
+---
+import '@/styles.css';
+import { getAdSettings, getSiteSettings } from '@/lib/db';
+
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const siteSettings = await getSiteSettings();
+const finalTitle = title ? `${title} | ${siteSettings.site_name}` : siteSettings.site_name;
+const finalDescription = description || siteSettings.site_description;
+// Standardize canonical URL (no trailing slash)
+const canonicalPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const canonicalURL = new URL(canonicalPath, "https://2faauth.in").toString();
+const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '';
+
+const adSettings = await getAdSettings();
+const showAds = adSettings.enabled && adSettings.adsense_client;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#059669" />
+    <ClientRouter />
+    <title>{finalTitle}</title>
+    <meta name="description" content={finalDescription} />
+    <meta name="author" content="2FA auth" />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={finalTitle} />
+    <meta property="og:description" content={finalDescription} />
+    <meta property="og:site_name" content={siteSettings.site_name} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content="https://2faauth.in/og-image.png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={finalTitle} />
+    <meta name="twitter:description" content={finalDescription} />
+    <meta name="twitter:image" content="https://2faauth.in/og-image.png" />
+    <meta name="twitter:image:alt" content={`${siteSettings.site_name} — TOTP 2FA Generator`} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    {showAds && (
+      <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adSettings.adsense_client}`} crossorigin="anonymous"></script>
+    )}
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "2FA auth",
+      url: "https://2faauth.in",
+      description: "Local-first TOTP authenticator. Generate, manage, and verify RFC 6238 2FA codes in your browser.",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: "https://2faauth.in/blog?q={search_term_string}",
+        "query-input": "required name=search_term_string",
+      },
+    })} />
+    
+    {isHome && (
+      <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        name: siteSettings.site_name,
+        url: "https://2faauth.in",
+        logo: "https://2faauth.in/apple-touch-icon.png",
+      })} />
+    )}
+
+    <script is:inline>
+      const applyTheme = () => {
+        try {
+          var stored = localStorage.getItem('secure2fa:theme');
+          var dark = stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (dark) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      };
+      
+      applyTheme();
+      document.addEventListener('astro:after-swap', applyTheme);
+
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

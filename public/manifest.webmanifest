@@ -1,0 +1,15 @@
+{
+  "name": "2FA auth",
+  "short_name": "2FA auth",
+  "description": "Local-first TOTP authenticator. Paste a Base32 key, get a rolling 6-digit 2FA code in your browser.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#059669",
+  "icons": [
+    { "src": "/favicon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any" },
+    { "src": "/apple-touch-icon.png", "type": "image/png", "sizes": "512x512", "purpose": "any" },
+    { "src": "/apple-touch-icon.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" }
+  ]
+}

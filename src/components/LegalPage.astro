@@ -1,0 +1,41 @@
+---
+import Layout from '../layouts/Layout.astro';
+import LandingNav from '@/components/LandingNav.astro';
+import LandingFooter from '@/components/LandingFooter.astro';
+
+interface Props {
+  title: string;
+  intro?: string;
+  jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
+  lastUpdated?: string;
+}
+
+const { title, intro, jsonLd, lastUpdated = "June 26, 2026" } = Astro.props;
+---
+
+<Layout title={title} description={intro}>
+  {jsonLd && (
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(jsonLd)}
+    />
+  )}
+  <div class="relative min-h-screen bg-background text-foreground flex flex-col">
+    <LandingNav />
+    <main class="flex-1 px-5 sm:px-6 py-14">
+      <article class="max-w-3xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight font-heading">{title}</h1>
+        {intro && (
+          <p class="mt-4 text-base text-muted-foreground leading-relaxed font-body">{intro}</p>
+        )}
+        <div class="mt-10 space-y-6 text-sm leading-7 text-foreground/90 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:tracking-tight [&_h2]:mt-10 [&_h2]:mb-2 [&_h2]:font-heading [&_p]:text-muted-foreground [&_p]:font-body [&_ul]:list-disc [&_ul]:ps-6 [&_ul]:text-muted-foreground [&_ul]:font-body [&_li]:my-1">
+          <slot />
+        </div>
+        <p class="mt-12 text-xs text-muted-foreground font-body">
+          Last updated: {lastUpdated}
+        </p>
+      </article>
+    </main>
+    <LandingFooter />
+  </div>
+</Layout>

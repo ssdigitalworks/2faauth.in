@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /auth
+Disallow: /reset-password
+Disallow: /admin
+
+Sitemap: https://2faauth.in/sitemap.xml

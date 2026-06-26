@@ -1,0 +1,80 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { getSiteSettings, saveSiteSettings } from '@/lib/db';
+import { verifyAdminSession } from '@/lib/session';
+
+const sessionToken = Astro.cookies.get("admin_session")?.value;
+if (!await verifyAdminSession(sessionToken)) {
+  return Astro.redirect("/auth");
+}
+
+let saved = false;
+
+if (Astro.request.method === 'POST') {
+  const data = await Astro.request.formData();
+  saveSiteSettings({
+    site_name: data.get("site_name")?.toString() || "",
+    site_description: data.get("site_description")?.toString() || "",
+    footer_text: data.get("footer_text")?.toString() || "",
+    contact_email: data.get("contact_email")?.toString() || "",
+    contact_info: data.get("contact_info")?.toString() || "",
+  });
+  saved = true;
+}
+
+const settings = await getSiteSettings();
+---
+
+<AdminLayout title="Site Settings | Admin" activeTab="settings">
+  <h1 class="text-3xl font-bold font-heading mb-6">Site Settings</h1>
+        
+        {saved && (
+          <div class="mb-6 rounded-md bg-emerald-500/10 p-4 ring-1 ring-emerald-500/20">
+            <p class="text-sm text-emerald-600 dark:text-emerald-400 font-medium">Settings saved successfully!</p>
+          </div>
+        )}
+
+        <form method="POST" class="space-y-6 max-w-2xl bg-card border border-border rounded-xl p-6 shadow-sm">
+          
+          <div>
+            <label for="site_name" class="block text-sm font-medium text-foreground mb-1">Site Name</label>
+            <input type="text" id="site_name" name="site_name" value={settings.site_name} required
+              class="block w-full rounded-md border border-border px-3 py-2 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand sm:text-sm bg-background" />
+          </div>
+
+          <div>
+            <label for="site_description" class="block text-sm font-medium text-foreground mb-1">SEO Description</label>
+            <textarea id="site_description" name="site_description" rows="3" required
+              class="block w-full rounded-md border border-border px-3 py-2 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand sm:text-sm bg-background">{settings.site_description}</textarea>
+          </div>
+
+          <hr class="border-border my-6" />
+
+          <div>
+            <label for="footer_text" class="block text-sm font-medium text-foreground mb-1">Footer Text</label>
+            <textarea id="footer_text" name="footer_text" rows="2"
+              class="block w-full rounded-md border border-border px-3 py-2 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand sm:text-sm bg-background">{settings.footer_text}</textarea>
+          </div>
+
+          <div class="grid gap-6 sm:grid-cols-2">
+            <div>
+              <label for="contact_email" class="block text-sm font-medium text-foreground mb-1">Contact Email</label>
+              <input type="email" id="contact_email" name="contact_email" value={settings.contact_email}
+                class="block w-full rounded-md border border-border px-3 py-2 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand sm:text-sm bg-background" />
+            </div>
+            
+            <div>
+              <label for="contact_info" class="block text-sm font-medium text-foreground mb-1">Contact Info (Optional)</label>
+              <input type="text" id="contact_info" name="contact_info" value={settings.contact_info} placeholder="e.g. Phone number"
+                class="block w-full rounded-md border border-border px-3 py-2 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand sm:text-sm bg-background" />
+            </div>
+          </div>
+
+          <div class="pt-4 flex justify-end">
+            <button type="submit" class="rounded-md bg-brand px-6 py-2 text-sm font-medium text-brand-foreground shadow-sm hover:bg-brand/90 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 transition-colors">
+              Save Settings
+            </button>
+          </div>
+        </form>
+
+</AdminLayout>

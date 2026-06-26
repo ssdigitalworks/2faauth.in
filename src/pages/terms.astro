@@ -1,0 +1,59 @@
+---
+import LegalPage from '@/components/LegalPage.astro';
+
+const termsJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Terms of Service — 2FA auth",
+  url: "/terms",
+  description:
+    "Use 2FA auth at your own risk. Free, as-is, no warranty, educational use only.",
+  isPartOf: { "@type": "WebSite", name: "2FA auth", url: "/" },
+};
+---
+
+<LegalPage
+  jsonLd={termsJsonLd}
+  title="Terms of Service"
+  intro="By using 2FA auth you agree to these terms. They are intentionally short and written in plain language."
+>
+  <h2>The service</h2>
+  <p>
+    2FA auth is a free, client-side web tool that generates time-based one-time passwords
+    (TOTP) from a Base32 secret you supply. It is offered at no cost and with no account.
+  </p>
+
+  <h2>Acceptable use</h2>
+  <ul>
+    <li>Only enter secret keys you are authorized to use.</li>
+    <li>Do not use 2FA auth to access accounts that don't belong to you.</li>
+    <li>Do not attempt to attack, overload, scrape, or reverse-engineer the service.</li>
+  </ul>
+
+  <h2>No warranty</h2>
+  <p>
+    2FA auth is provided "as is" and "as available" without warranties of any kind, express or
+    implied. We do not guarantee that the generated codes will be accepted by any particular
+    service, that the site will be uninterrupted, or that it will be free of bugs.
+  </p>
+
+  <h2>Limitation of liability</h2>
+  <p>
+    To the maximum extent permitted by law, the operators of 2FA auth are not liable for any
+    direct, indirect, incidental, special, consequential, or exemplary damages arising from
+    your use of — or inability to use — the service, including but not limited to account
+    lockouts, lost data, or security incidents.
+  </p>
+
+  <h2>Your responsibility</h2>
+  <p>
+    You are solely responsible for safeguarding your TOTP secrets and for the security of the
+    accounts they protect. Treat your secret keys with the same care as your passwords.
+  </p>
+
+  <h2>Changes</h2>
+  <p>
+    We may update these terms from time to time. Continued use of 2FA auth after changes are
+    posted constitutes acceptance of the updated terms.
+  </p>
+</LegalPage>

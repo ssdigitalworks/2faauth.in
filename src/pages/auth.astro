@@ -1,0 +1,87 @@
+---
+import Layout from '../layouts/Layout.astro';
+import LandingNav from '@/components/LandingNav.astro';
+import LandingFooter from '@/components/LandingFooter.astro';
+
+import { signAdminSession, verifyAdminSession } from '@/lib/session';
+
+// Admin credentials — loaded ONLY from environment variables, no hardcoded fallback
+const ADMIN_EMAIL = import.meta.env.ADMIN_EMAIL;
+const ADMIN_PASSWORD = import.meta.env.ADMIN_PASSWORD;
+
+let error = "";
+
+if (Astro.request.method === "POST") {
+  const data = await Astro.request.formData();
+  const email = data.get("email")?.toString().trim();
+  const password = data.get("password")?.toString();
+
+  if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
+    error = "Server misconfiguration: admin credentials are not set.";
+  } else if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    const token = await signAdminSession();
+    Astro.cookies.set("admin_session", token, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      secure: import.meta.env.PROD,
+      maxAge: 60 * 60 * 24 * 7 // 1 week
+    });
+    return Astro.redirect("/admin");
+  } else {
+    error = "Invalid email or password.";
+  }
+}
+
+// Redirect to admin if already logged in with valid signed token
+const existingToken = Astro.cookies.get("admin_session")?.value;
+if (existingToken && await verifyAdminSession(existingToken)) {
+  return Astro.redirect("/admin");
+}
+---
+
+<Layout title="Sign In — 2FA auth">
+  <div class="relative min-h-screen bg-background text-foreground flex flex-col">
+    <LandingNav />
+    <main class="flex-1 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-card py-8 px-4 shadow sm:rounded-lg sm:px-10 ring-1 ring-border">
+          <h2 class="mb-6 text-center text-2xl font-bold tracking-tight text-foreground font-heading">
+            Admin Login
+          </h2>
+
+          {error && (
+            <div class="mb-4 rounded-md bg-destructive/10 p-4 ring-1 ring-destructive/20">
+              <p class="text-sm text-destructive text-center">{error}</p>
+            </div>
+          )}
+
+          <form class="space-y-6" method="POST">
+            <div>
+              <label for="email" class="block text-sm font-medium text-foreground">Email address</label>
+              <div class="mt-1">
+                <input id="email" name="email" type="email" autocomplete="email" required 
+                  class="block w-full appearance-none rounded-md border border-border px-3 py-2 placeholder-muted-foreground shadow-sm focus:border-brand focus:outline-none focus:ring-brand sm:text-sm bg-background" />
+              </div>
+            </div>
+
+            <div>
+              <label for="password" class="block text-sm font-medium text-foreground">Password</label>
+              <div class="mt-1">
+                <input id="password" name="password" type="password" autocomplete="current-password" required 
+                  class="block w-full appearance-none rounded-md border border-border px-3 py-2 placeholder-muted-foreground shadow-sm focus:border-brand focus:outline-none focus:ring-brand sm:text-sm bg-background" />
+              </div>
+            </div>
+
+            <div>
+              <button type="submit" class="flex w-full justify-center rounded-md border border-transparent bg-brand py-2 px-4 text-sm font-medium text-brand-foreground shadow-sm hover:bg-brand/90 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2">
+                Sign in
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+    <LandingFooter />
+  </div>
+</Layout>

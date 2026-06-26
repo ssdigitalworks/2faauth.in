@@ -1,0 +1,48 @@
+---
+import LegalPage from '@/components/LegalPage.astro';
+
+const aboutJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "About — 2FA auth",
+  url: "/about",
+  description:
+    "2FA auth is a free, client-side TOTP generator. Learn what it does, who it's for, and the principles behind it.",
+  isPartOf: { "@type": "WebSite", name: "2FA auth", url: "/" },
+};
+---
+
+<LegalPage
+  jsonLd={aboutJsonLd}
+  title="About 2FA auth"
+  intro="2FA auth is a free, browser-based two-factor authentication code generator built around the open RFC 6238 standard."
+>
+  <h2>What this tool does</h2>
+  <p>
+    Paste a Base32 secret key from any service that supports authenticator apps (Google, GitHub,
+    AWS, Microsoft, and thousands more) and 2FA auth renders the matching 6-digit time-based
+    one-time password — refreshed every 30 seconds, exactly like Google Authenticator, Authy, or
+    1Password would.
+  </p>
+
+  <h2>How it's different</h2>
+  <ul>
+    <li>100% client-side. Your secret never leaves the browser tab.</li>
+    <li>No accounts, no installs, no cloud sync.</li>
+    <li>Open standards only: RFC 6238 (TOTP), RFC 4226 (HOTP), SHA-1, 6 digits, 30s period.</li>
+    <li>Works offline once the page is loaded.</li>
+  </ul>
+
+  <h2>Who it's for</h2>
+  <p>
+    Developers testing 2FA flows, security engineers verifying tokens, support teams reproducing
+    login issues, and curious users who want to understand how authenticator apps actually work
+    under the hood.
+  </p>
+
+  <h2>Who's behind it</h2>
+  <p>
+    2FA auth is an independent educational project. It is not affiliated with Google, Authy,
+    Microsoft, or any other authenticator vendor.
+  </p>
+</LegalPage>

@@ -1,0 +1,88 @@
+{
+  "site_settings": {
+    "site_name": "2FA auth",
+    "site_description": "A secure, privacy-first, zero-knowledge TOTP 2FA generator running entirely in your browser.",
+    "footer_text": "A secure, privacy-first, zero-knowledge TOTP 2FA generator running entirely in your browser.",
+    "contact_email": "support@2faauth.com",
+    "contact_info": ""
+  },
+  "ad_settings": {
+    "adsense_client": "ca-pub-1234567890123456",
+    "auto_ads": true,
+    "enabled": false,
+    "header_ad_enabled": false,
+    "footer_ad_enabled": false,
+    "left_ad_enabled": true,
+    "right_ad_enabled": true
+  },
+  "nav_items": [
+    {
+      "id": 1,
+      "label": "About",
+      "url": "/about",
+      "visible": true,
+      "order_index": 1
+    },
+    {
+      "id": 2,
+      "label": "Blog",
+      "url": "/blog",
+      "visible": true,
+      "order_index": 2
+    },
+    {
+      "id": 3,
+      "label": "Contact",
+      "url": "/contact",
+      "visible": true,
+      "order_index": 3
+    },
+    {
+      "id": 4,
+      "label": "Privacy",
+      "url": "/privacy",
+      "visible": true,
+      "order_index": 4
+    },
+    {
+      "id": 5,
+      "label": "Terms",
+      "url": "/terms",
+      "visible": true,
+      "order_index": 5
+    },
+    {
+      "id": 6,
+      "label": "Disclaimer",
+      "url": "/disclaimer",
+      "visible": true,
+      "order_index": 6
+    }
+  ],
+  "blog_posts": [
+    {
+      "id": "1",
+      "slug": "what-is-totp",
+      "title": "What is TOTP and how does it actually work?",
+      "excerpt": "A plain-language walkthrough of RFC 6238: the shared secret, the time step, HMAC-SHA1, and the truncation that turns a hash into 6 digits.",
+      "date": "2026-06-10",
+      "content": "## The shared secret\n\nWhen you scan a QR code from a service, you copy a short string of random bytes into your authenticator. That string — encoded in Base32 — is the only piece of data both sides need to keep in sync.\n\n## The time step\n\nTOTP slices wall-clock time into 30-second windows. Both the server and your authenticator round the current Unix time down to the nearest 30 seconds, so they agree on a counter even without ever talking to each other.\n\n## HMAC-SHA1 and truncation\n\nThe counter is hashed with HMAC-SHA1 using the secret as the key. RFC 4226's dynamic truncation picks 4 bytes from that hash, reduces them mod 10⁶, and you get 6 digits."
+    },
+    {
+      "id": "2",
+      "slug": "base32-secrets-explained",
+      "title": "Why authenticator secrets are written in Base32",
+      "excerpt": "Base32 keeps secrets human-readable, copy-paste safe, and case-insensitive — here's why TOTP picked it over hex or Base64.",
+      "date": "2026-05-22",
+      "content": "## Why not hex or Base64?\n\nBase32 uses 32 case-insensitive characters (A–Z and 2–7). That avoids the visually confusing pairs like `0/O` and `1/l`, survives being read aloud over the phone, and is safe to paste into any text field.\n\n## Padding and grouping\n\nMost authenticator UIs strip `=` padding and group the secret into blocks of four for readability. 2FA auth normalizes whitespace and case before decoding."
+    },
+    {
+      "id": "3",
+      "slug": "client-side-2fa-privacy",
+      "title": "Client-side 2FA: why your secret should never leave the browser",
+      "excerpt": "A look at the privacy trade-offs between cloud-synced authenticator apps and zero-knowledge, local-only generators.",
+      "date": "2026-04-30",
+      "content": "## What a cloud-synced authenticator sees\n\nWhen your authenticator syncs across devices, your TOTP secrets sit — encrypted or not — on someone else's servers. A breach of that vendor is a breach of every account those secrets protect.\n\n## The zero-knowledge alternative\n\nA client-side generator like 2FA auth never transmits your secret. The HMAC and truncation run in your tab via the Web Crypto API; close the tab and there is nothing left behind on any server.\n\n## Trade-offs\n\nYou give up automatic sync and backup. For high-value accounts, pair a hardware key or an audited authenticator with a written backup of your recovery codes."
+    }
+  ]
+}

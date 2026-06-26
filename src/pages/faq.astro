@@ -1,0 +1,220 @@
+---
+import LegalPage from '@/components/LegalPage.astro';
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How does 2FA auth work?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "2FA auth runs entirely in your browser. It uses the Web Crypto API to compute RFC 6238 time-based one-time passwords (TOTP) from the Base32 secret you paste. No secret or code is sent to a server.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is 2FA auth safe to use?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The tool itself is designed to be zero-knowledge: all cryptographic operations happen locally in your browser. Treat it as you would any authenticator app — only enter secret keys you own or are authorized to test, and avoid pasting secrets on shared or untrusted devices.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What does 'client-side' and 'local-first' mean?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Client-side means the TOTP math and key handling run in your browser, not on our servers. Local-first means any saved codes or settings are stored in your browser's localStorage unless you choose otherwise. We never see your data.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can I save my secret keys for later?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. The Saved Codes feature lets you store names and secrets in your browser. They are stored in localStorage and can be optionally encrypted with a passphrase using the Web Crypto API.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What happens if I forget my encryption passphrase?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "If you enable passphrase encryption, the keys are encrypted before being stored. Forgetting the passphrase means the saved secrets cannot be recovered — there is no backdoor or reset mechanism. Keep your passphrase somewhere safe.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can I import or export my saved codes?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. You can export your saved codes to JSON or a plain text backup. Imports support the same formats; the importer skips invalid or duplicate entries and reports what was skipped so the rest of the file still loads.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Does 2FA auth work offline?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Once the page is loaded, the core TOTP generator and saved codes work without a network connection. The site only needs the internet to load initially or to update.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do I need an account?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. The generator works without an account. Some optional features, like the admin dashboard, may require signing in, but generating TOTP codes and saving them locally does not.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Which services are compatible?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Any service that supports standard TOTP authenticator apps (Google, GitHub, Microsoft, AWS, Dropbox, and many more) is compatible. The tool expects a Base32 secret key, which is the default format used by most authenticator setups.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How is this different from Google Authenticator or Authy?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "2FA auth is a web-based tool for quick generation, testing, and learning. It does not require installing an app, but it also does not offer backup sync or account recovery the way dedicated authenticator apps do. Use it for convenience, testing, or emergencies, not as your primary 2FA vault.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Are there keyboard shortcuts?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. The Saved Codes drawer supports shortcuts such as focusing search, navigating items, copying a selected code, and removing it. Look for the shortcut hints inside the saved codes panel.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is 2FA auth affiliated with Google, Microsoft, or Authy?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. 2FA auth is an independent educational project and is not affiliated with any authenticator vendor or service provider.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can I use this for production 2FA logins?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The code is generated using the same open standard as production authenticator apps, so the numbers are valid. However, the tool is provided as-is for educational and testing purposes. You are responsible for the security of the device and browser you use it on.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How do I report a bug or request a feature?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Use the contact channel listed on the About page. Please include the browser, steps to reproduce, and what you expected to happen.",
+      },
+    },
+  ],
+};
+---
+
+<LegalPage
+  jsonLd={faqJsonLd}
+  title="Frequently asked questions"
+  intro="Answers to common questions about 2FA auth, how it works, and how to use it safely."
+>
+  <h2>How does 2FA auth work?</h2>
+  <p>
+    2FA auth runs entirely in your browser. It uses the Web Crypto API to compute RFC 6238
+    time-based one-time passwords (TOTP) from the Base32 secret you paste. No secret or code is
+    sent to a server.
+  </p>
+
+  <h2>Is 2FA auth safe to use?</h2>
+  <p>
+    The tool itself is designed to be zero-knowledge: all cryptographic operations happen locally
+    in your browser. Treat it as you would any authenticator app — only enter secret keys you own
+    or are authorized to test, and avoid pasting secrets on shared or untrusted devices.
+  </p>
+
+  <h2>What does "client-side" and "local-first" mean?</h2>
+  <p>
+    Client-side means the TOTP math and key handling run in your browser, not on our servers.
+    Local-first means any saved codes or settings are stored in your browser's localStorage unless
+    you choose otherwise. We never see your data.
+  </p>
+
+  <h2>Can I save my secret keys for later?</h2>
+  <p>
+    Yes. The Saved Codes feature lets you store names and secrets in your browser. They are stored
+    in localStorage and can be optionally encrypted with a passphrase using the Web Crypto API.
+  </p>
+
+  <h2>What happens if I forget my encryption passphrase?</h2>
+  <p>
+    If you enable passphrase encryption, the keys are encrypted before being stored. Forgetting the
+    passphrase means the saved secrets cannot be recovered — there is no backdoor or reset mechanism.
+    Keep your passphrase somewhere safe.
+  </p>
+
+  <h2>Can I import or export my saved codes?</h2>
+  <p>
+    Yes. You can export your saved codes to JSON or a plain text backup. Imports support the same
+    formats; the importer skips invalid or duplicate entries and reports what was skipped so the rest
+    of the file still loads.
+  </p>
+
+  <h2>Does 2FA auth work offline?</h2>
+  <p>
+    Once the page is loaded, the core TOTP generator and saved codes work without a network connection.
+    The site only needs the internet to load initially or to update.
+  </p>
+
+  <h2>Do I need an account?</h2>
+  <p>
+    No. The generator works without an account. Some optional features, like the admin dashboard, may
+    require signing in, but generating TOTP codes and saving them locally does not.
+  </p>
+
+  <h2>Which services are compatible?</h2>
+  <p>
+    Any service that supports standard TOTP authenticator apps (Google, GitHub, Microsoft, AWS,
+    Dropbox, and many more) is compatible. The tool expects a Base32 secret key, which is the default
+    format used by most authenticator setups.
+  </p>
+
+  <h2>How is this different from Google Authenticator or Authy?</h2>
+  <p>
+    2FA auth is a web-based tool for quick generation, testing, and learning. It does not require
+    installing an app, but it also does not offer backup sync or account recovery the way dedicated
+    authenticator apps do. Use it for convenience, testing, or emergencies, not as your primary 2FA vault.
+  </p>
+
+  <h2>Are there keyboard shortcuts?</h2>
+  <p>
+    Yes. The Saved Codes drawer supports shortcuts such as focusing search, navigating items, copying
+    a selected code, and removing it. Look for the shortcut hints inside the saved codes panel.
+  </p>
+
+  <h2>Is 2FA auth affiliated with Google, Microsoft, or Authy?</h2>
+  <p>
+    No. 2FA auth is an independent educational project and is not affiliated with any authenticator
+    vendor or service provider.
+  </p>
+
+  <h2>Can I use this for production 2FA logins?</h2>
+  <p>
+    The code is generated using the same open standard as production authenticator apps, so the numbers
+    are valid. However, the tool is provided as-is for educational and testing purposes. You are
+    responsible for the security of the device and browser you use it on.
+  </p>
+
+  <h2>How do I report a bug or request a feature?</h2>
+  <p>
+    Use the contact channel listed on the About page. Please include the browser, steps to reproduce,
+    and what you expected to happen.
+  </p>
+</LegalPage>

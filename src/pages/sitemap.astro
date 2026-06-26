@@ -1,0 +1,102 @@
+---
+import Layout from '../layouts/Layout.astro';
+import LandingNav from '@/components/LandingNav.astro';
+import LandingFooter from '@/components/LandingFooter.astro';
+---
+
+<Layout title="Sitemap & Documentation — 2FA auth">
+  <div class="relative min-h-screen bg-background text-foreground flex flex-col">
+    <LandingNav />
+    
+    <main class="flex-1 max-w-4xl mx-auto w-full px-5 sm:px-6 py-12 lg:py-20 animate-fade-up">
+      <div class="space-y-12">
+        
+        <!-- Header -->
+        <div class="text-center space-y-4">
+          <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight font-heading text-foreground">
+            Site Map & Documentation
+          </h1>
+          <p class="text-lg text-muted-foreground font-body max-w-2xl mx-auto">
+            Everything you need to know about 2FA auth, how it works, and how to use it safely.
+          </p>
+        </div>
+
+        <hr class="border-border" />
+
+        <!-- Quick Links (The actual sitemap) -->
+        <section class="space-y-6">
+          <h2 class="text-2xl font-bold font-heading text-brand">Directory</h2>
+          <div class="grid sm:grid-cols-2 gap-4 font-body">
+            <div class="p-6 rounded-xl bg-card border border-border shadow-sm">
+              <h3 class="font-semibold text-lg mb-3">Core Tools</h3>
+              <ul class="space-y-2 text-muted-foreground">
+                <li><a href="/" class="hover:text-brand hover:underline transition-colors">Instant TOTP Generator (Home)</a></li>
+              </ul>
+            </div>
+            <div class="p-6 rounded-xl bg-card border border-border shadow-sm">
+              <h3 class="font-semibold text-lg mb-3">Resources & Legal</h3>
+              <ul class="space-y-2 text-muted-foreground">
+                <li><a href="/blog" class="hover:text-brand hover:underline transition-colors">Security Blog</a></li>
+                <li><a href="/about" class="hover:text-brand hover:underline transition-colors">About Us</a></li>
+                <li><a href="/privacy" class="hover:text-brand hover:underline transition-colors">Privacy Policy</a></li>
+                <li><a href="/terms" class="hover:text-brand hover:underline transition-colors">Terms of Service</a></li>
+                <li><a href="/faq" class="hover:text-brand hover:underline transition-colors">FAQ</a></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- What is TOTP -->
+        <section class="space-y-4 font-body prose prose-invert max-w-none text-muted-foreground">
+          <h2 class="text-2xl font-bold font-heading text-foreground no-underline">What is TOTP?</h2>
+          <p>
+            <strong>TOTP</strong> stands for <em>Time-Based One-Time Password</em>. It is a computer algorithm that generates a one-time password (OTP) which uses the current time as a source of uniqueness. It is the core technology behind popular authenticator apps like Google Authenticator, Authy, and Microsoft Authenticator.
+          </p>
+          <p>
+            Because the password changes every 30 seconds, it provides a highly secure layer of protection known as Two-Factor Authentication (2FA). Even if a hacker steals your standard password, they cannot log into your account without also having physical access to the device generating your TOTP codes.
+          </p>
+        </section>
+
+        <!-- What is the Key? -->
+        <section class="space-y-4 font-body prose prose-invert max-w-none text-muted-foreground">
+          <h2 class="text-2xl font-bold font-heading text-foreground no-underline">What is the "Secret Key"?</h2>
+          <p>
+            When you set up 2FA on a website (like GitHub, Google, or Twitter), they will show you a QR code. Hidden inside that QR code is a <strong>Base32 Secret Key</strong> (a long string of letters and numbers, like <code>JBSWY3DPEHPK3PXP</code>). 
+          </p>
+          <p>
+            This key is a shared secret between the website and your authenticator app. Both sides run the exact same mathematical formula using this key and the current time. If the 6-digit number you type matches the number the website generates, it proves you own the secret key.
+          </p>
+        </section>
+
+        <!-- How to Use -->
+        <section class="space-y-4 font-body prose prose-invert max-w-none text-muted-foreground">
+          <h2 class="text-2xl font-bold font-heading text-foreground no-underline">How to Use This Website</h2>
+          <ol class="list-decimal pl-5 space-y-3">
+            <li><strong>Get your secret key:</strong> When setting up 2FA on any website, click the option that says "Trouble scanning?" or "Enter setup key manually" to view your Base32 secret.</li>
+            <li><strong>Paste the key:</strong> Paste that secret key into the text box on our homepage.</li>
+            <li><strong>Get your code:</strong> The 6-digit code will instantly appear on the screen. It updates automatically every 30 seconds.</li>
+            <li><strong>Save for later:</strong> You can click the "Save" button to store the key securely in your browser's local storage for future use.</li>
+            <li><strong>Export to Mobile:</strong> Need to move it to your phone? Click the "QR" button to generate a QR code that you can scan with Google Authenticator or Authy.</li>
+          </ol>
+        </section>
+
+        <!-- Features & Privacy -->
+        <section class="space-y-4 font-body prose prose-invert max-w-none text-muted-foreground">
+          <h2 class="text-2xl font-bold font-heading text-foreground no-underline">Features & Privacy (Why Use Us?)</h2>
+          <p>
+            We built this tool with absolute, uncompromising privacy in mind. Here is why you can trust it:
+          </p>
+          <ul class="list-disc pl-5 space-y-2">
+            <li><strong>100% Client-Side Processing:</strong> Your secret key NEVER leaves your browser. We do not send your key to our servers. The mathematics that generate the 6-digit code happen entirely inside your device's memory.</li>
+            <li><strong>Zero-Knowledge Architecture:</strong> We have no database of user keys. It is physically impossible for us to leak your 2FA keys because we do not have them.</li>
+            <li><strong>Offline Capable:</strong> Once the page loads, you can disconnect your internet. The generator will continue to work perfectly offline.</li>
+            <li><strong>Local Storage Only:</strong> When you "Save" an account, it is saved exclusively in your browser's `localStorage`. If you clear your browser data, the accounts are gone forever.</li>
+          </ul>
+        </section>
+
+      </div>
+    </main>
+    
+    <LandingFooter />
+  </div>
+</Layout>

@@ -1,0 +1,57 @@
+---
+import Layout from '../layouts/Layout.astro';
+import LandingNav from '@/components/LandingNav.astro';
+import InstantTotp from '@/components/InstantTotp.astro';
+import SavedAccountsDrawer from '@/components/SavedAccountsDrawer.astro';
+import AdUnit from '@/components/AdUnit.astro';
+import LandingFooter from '@/components/LandingFooter.astro';
+import { Icon } from 'astro-icon/components';
+---
+
+<Layout>
+  <LandingNav />
+  <main class="min-h-[calc(100vh-3.5rem)] flex pt-8 pb-24 sm:pt-16 md:pt-20 px-5 relative overflow-hidden bg-background w-full">
+    <!-- Grid background -->
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+    
+    <div class="max-w-7xl mx-auto w-full flex items-start justify-center gap-8 relative z-10">
+      
+      <!-- Left Ad -->
+      <AdUnit placement="left" className="shrink-0 animate-fade-up" />
+
+      <!-- Center TOTP -->
+      <div class="max-w-md w-full animate-fade-up shrink-0" style="animation-delay: 50ms;">
+        <div class="relative">
+          <div class="absolute -inset-1 bg-gradient-to-b from-brand/20 to-transparent rounded-[20px] blur-xl opacity-50 pointer-events-none" />
+          <div class="relative flex flex-col gap-6">
+            <InstantTotp />
+            
+            <button
+              id="home-saved-btn"
+              class="mx-auto flex items-center gap-2 px-6 py-3 rounded-full bg-brand/10 text-brand border border-brand/20 font-medium text-sm hover:bg-brand/20 hover:border-brand/40 shadow-[0_0_15px_-5px_rgba(5,150,105,0.3)] hover:shadow-[0_0_20px_-5px_rgba(5,150,105,0.5)] transition-all duration-300 font-body"
+            >
+              <Icon name="heroicons:bookmark" class="size-4" />
+              View Saved Codes
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Ad -->
+      <AdUnit placement="right" className="shrink-0 animate-fade-up" />
+
+    </div>
+
+  </main>
+  <SavedAccountsDrawer />
+  <LandingFooter />
+</Layout>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const homeSavedBtn = document.getElementById('home-saved-btn');
+    homeSavedBtn?.addEventListener('click', () => {
+      document.dispatchEvent(new CustomEvent('tfa:open-drawer'));
+    });
+  });
+</script>

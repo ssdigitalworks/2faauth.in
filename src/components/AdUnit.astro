@@ -1,0 +1,45 @@
+---
+import { getAdSettings } from '@/lib/db';
+
+const adSettings = await getAdSettings();
+const showAds = Boolean(adSettings.enabled && adSettings.adsense_client);
+
+interface Props {
+  placement: 'left' | 'right';
+  className?: string;
+}
+
+const { placement, className = "" } = Astro.props;
+
+let isEnabled = false;
+if (placement === 'left' && adSettings.left_ad_enabled) isEnabled = true;
+if (placement === 'right' && adSettings.right_ad_enabled) isEnabled = true;
+
+const isProduction = !['localhost', '127.0.0.1'].includes(Astro.url.hostname);
+const isAdmin = Astro.url.pathname.startsWith('/admin');
+const shouldRender = showAds && isEnabled && !isAdmin;
+---
+
+{shouldRender && (
+  <div class={`hidden lg:flex w-[300px] flex-col items-center justify-start ${className}`}>
+    <div class="bg-muted/30 border border-border/50 rounded-lg flex items-center justify-center w-full min-h-[600px] relative overflow-hidden">
+      <div class="absolute inset-0 flex items-center justify-center text-muted-foreground/50 text-xs tracking-widest uppercase font-heading pointer-events-none text-center px-4">
+        Advertisement
+      </div>
+      
+      {isProduction && (
+        <Fragment>
+          <ins class="adsbygoogle w-full h-full relative z-10"
+            style="display:block;"
+            data-ad-client={adSettings.adsense_client}
+            data-ad-format="vertical"
+            data-full-width-responsive="true">
+          </ins>
+          <script is:inline>
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </Fragment>
+      )}
+    </div>
+  </div>
+)}

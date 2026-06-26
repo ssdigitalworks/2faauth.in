@@ -1,0 +1,49 @@
+---
+import Layout from './Layout.astro';
+import LandingNav from '@/components/LandingNav.astro';
+import LandingFooter from '@/components/LandingFooter.astro';
+
+interface Props {
+  title: string;
+  activeTab: 'dashboard' | 'settings' | 'ads' | 'navigation' | 'blog';
+}
+
+const { title, activeTab } = Astro.props;
+
+const getLinkClass = (tab: string) => {
+  if (activeTab === tab) {
+    return "px-3 py-2 text-sm font-medium rounded-md bg-muted text-foreground";
+  }
+  return "px-3 py-2 text-sm font-medium rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors";
+};
+---
+
+<Layout title={title}>
+  <div class="relative min-h-screen bg-background text-foreground flex flex-col">
+    <LandingNav />
+    
+    <div class="flex-1 flex max-w-6xl w-full mx-auto px-5 sm:px-6 py-8 gap-8">
+      
+      {/* Sidebar Navigation */}
+      <aside class="w-64 shrink-0 hidden md:block">
+        <nav class="sticky top-24 flex flex-col gap-1">
+          <a href="/admin" class={getLinkClass('dashboard')}>Dashboard</a>
+          <a href="/admin/settings" class={getLinkClass('settings')}>Site Settings</a>
+          <a href="/admin/ads" class={getLinkClass('ads')}>AdSense</a>
+          <a href="/admin/navigation" class={getLinkClass('navigation')}>Navigation</a>
+          <a href="/admin/blog" class={getLinkClass('blog')}>Blog</a>
+          <div class="mt-4 pt-4 border-t border-border">
+            <a href="/admin?logout=true" class="px-3 py-2 text-sm font-medium rounded-md hover:bg-destructive/10 text-destructive transition-colors block">Log out</a>
+          </div>
+        </nav>
+      </aside>
+
+      {/* Main Content */}
+      <main class="flex-1 max-w-3xl">
+        <slot />
+      </main>
+    </div>
+    
+    <LandingFooter />
+  </div>
+</Layout>

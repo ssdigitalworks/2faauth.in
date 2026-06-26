@@ -1,0 +1,83 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { getNavItems, saveNavItems } from '@/lib/db';
+import { verifyAdminSession } from '@/lib/session';
+
+const sessionToken = Astro.cookies.get("admin_session")?.value;
+if (!await verifyAdminSession(sessionToken)) {
+  return Astro.redirect("/auth");
+}
+
+let saved = false;
+let items = await getNavItems();
+
+if (Astro.request.method === 'POST') {
+  const data = await Astro.request.formData();
+  
+  const ids = data.getAll("id[]");
+  
+  const newItems = ids.map((idStr, index) => {
+    const id = idStr.toString();
+    return {
+      id: parseInt(id),
+      label: data.get(`label_${id}`)?.toString() || "Link",
+      url: data.get(`url_${id}`)?.toString() || "/",
+      visible: data.get(`visible_${id}`) === "on",
+      order_index: index
+    };
+  });
+
+  saveNavItems(newItems);
+  items = newItems;
+  saved = true;
+}
+---
+
+<AdminLayout title="Navigation | Admin" activeTab="navigation">
+  <h1 class="text-3xl font-bold font-heading mb-6">Navigation Settings</h1>
+        
+        {saved && (
+          <div class="mb-6 rounded-md bg-emerald-500/10 p-4 ring-1 ring-emerald-500/20">
+            <p class="text-sm text-emerald-600 dark:text-emerald-400 font-medium">Navigation saved successfully!</p>
+          </div>
+        )}
+
+        <form method="POST" class="bg-card border border-border rounded-xl p-6 shadow-sm">
+          
+          <p class="text-sm text-muted-foreground mb-6">Manage the links that appear in your website's header and footer.</p>
+
+          <div class="space-y-4 mb-6">
+            <div class="grid grid-cols-12 gap-4 text-sm font-medium text-muted-foreground px-2">
+              <div class="col-span-1">Show</div>
+              <div class="col-span-4">Label</div>
+              <div class="col-span-7">URL Path</div>
+            </div>
+
+            {items.map((item) => (
+              <div class="grid grid-cols-12 gap-4 items-center bg-muted/30 p-2 rounded-md border border-border/50">
+                <input type="hidden" name="id[]" value={item.id} />
+                <div class="col-span-1 flex justify-center">
+                  <input type="checkbox" name={`visible_${item.id}`} checked={item.visible} value="on"
+                    class="size-4 rounded border-border text-brand focus:ring-brand bg-background" />
+                </div>
+                <div class="col-span-4">
+                  <input type="text" name={`label_${item.id}`} value={item.label} required
+                    class="block w-full rounded-md border border-border px-3 py-2 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand bg-background" />
+                </div>
+                <div class="col-span-7">
+                  <input type="text" name={`url_${item.id}`} value={item.url} required
+                    class="block w-full rounded-md border border-border px-3 py-2 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand bg-background font-mono" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div class="flex justify-end">
+            <button type="submit" class="rounded-md bg-brand px-6 py-2 text-sm font-medium text-brand-foreground shadow-sm hover:bg-brand/90 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 transition-colors">
+              Save Navigation
+            </button>
+          </div>
+
+        </form>
+
+</AdminLayout>

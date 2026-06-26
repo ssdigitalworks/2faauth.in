@@ -1,0 +1,63 @@
+---
+import { getSiteSettings, getNavItems } from '@/lib/db';
+
+const settings = await getSiteSettings();
+const nav = await getNavItems();
+
+const currentYear = new Date().getFullYear();
+const copyright = settings?.copyright_text?.replace("{year}", currentYear.toString())
+  || `© ${currentYear} ${settings?.site_name || "2FA auth"}. All rights reserved.`;
+
+const visibleNav = nav?.filter(it => it.visible).sort((a, b) => a.order_index - b.order_index) || [];
+---
+<footer class="border-t border-border bg-muted/40 pb-8 pt-16">
+  <div class="max-w-6xl mx-auto px-5 sm:px-6 animate-fade-up" style="animation-delay: 150ms;">
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold font-heading text-foreground">{settings?.site_name || "2FA auth"}</h3>
+        <p class="text-sm text-muted-foreground max-w-xs font-body">
+          {settings?.footer_text || "A secure, privacy-first, zero-knowledge TOTP 2FA generator running entirely in your browser."}
+        </p>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-4 text-foreground font-heading">Navigation</h4>
+        <ul class="space-y-2 text-sm text-muted-foreground font-body">
+          {visibleNav.map((it) => (
+            <li><a href={it.url} class="hover:text-foreground hover:underline transition-colors">{it.label}</a></li>
+          ))}
+          {visibleNav.length === 0 && (
+            <>
+              <li><a href="/about" class="hover:text-foreground hover:underline transition-colors">About</a></li>
+              <li><a href="/blog" class="hover:text-foreground hover:underline transition-colors">Blog</a></li>
+            </>
+          )}
+          <li><a href="/sitemap" class="hover:text-foreground hover:underline transition-colors">Site Map</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-4 text-foreground font-heading">Legal</h4>
+        <ul class="space-y-2 text-sm text-muted-foreground font-body">
+          <li><a href="/privacy" class="hover:text-foreground hover:underline transition-colors">Privacy policy</a></li>
+          <li><a href="/terms" class="hover:text-foreground hover:underline transition-colors">Terms of service</a></li>
+          <li><a href="/disclaimer" class="hover:text-foreground hover:underline transition-colors">Disclaimer</a></li>
+          <li><a href="/faq" class="hover:text-foreground hover:underline transition-colors">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-4 text-foreground font-heading">Contact</h4>
+        <ul class="space-y-2 text-sm text-muted-foreground font-body">
+          {settings?.contact_email && (
+            <li><a href={`mailto:${settings.contact_email}`} class="hover:text-foreground hover:underline transition-colors">{settings.contact_email}</a></li>
+          )}
+          {settings?.contact_info && (
+            <li class="whitespace-pre-wrap">{settings.contact_info}</li>
+          )}
+          <li><a href="/contact" class="hover:text-foreground hover:underline transition-colors">Contact us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="mt-16 pt-8 border-t border-border flex flex-col justify-center items-center text-center gap-4 text-sm text-muted-foreground font-body">
+      <div>{copyright}</div>
+    </div>
+  </div>
+</footer>

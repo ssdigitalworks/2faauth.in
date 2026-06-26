@@ -1,0 +1,95 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { getAdSettings, saveAdSettings } from '@/lib/db';
+import { verifyAdminSession } from '@/lib/session';
+
+const sessionToken = Astro.cookies.get("admin_session")?.value;
+if (!await verifyAdminSession(sessionToken)) {
+  return Astro.redirect("/auth");
+}
+
+let saved = false;
+
+if (Astro.request.method === 'POST') {
+  const data = await Astro.request.formData();
+  saveAdSettings({
+    adsense_client: data.get("adsense_client")?.toString() || "",
+    enabled: data.get("enabled") === "on",
+    auto_ads: data.get("auto_ads") === "on",
+    left_ad_enabled: data.get("left_ad_enabled") === "on",
+    right_ad_enabled: data.get("right_ad_enabled") === "on",
+  });
+  saved = true;
+}
+
+const adSettings = await getAdSettings();
+---
+
+<AdminLayout title="AdSense Settings | Admin" activeTab="ads">
+  <h1 class="text-3xl font-bold font-heading mb-6">Google AdSense</h1>
+        
+        {saved && (
+          <div class="mb-6 rounded-md bg-emerald-500/10 p-4 ring-1 ring-emerald-500/20">
+            <p class="text-sm text-emerald-600 dark:text-emerald-400 font-medium">Ad settings saved successfully!</p>
+          </div>
+        )}
+
+        <form method="POST" class="space-y-8 max-w-2xl">
+          
+          <div class="bg-card border border-border rounded-xl p-6 shadow-sm space-y-6">
+            <div>
+              <label for="adsense_client" class="block text-sm font-medium text-foreground mb-1">Google AdSense Client ID</label>
+              <p class="text-xs text-muted-foreground mb-3">Your publisher ID, e.g., <code>ca-pub-1234567890123456</code></p>
+              <input type="text" id="adsense_client" name="adsense_client" value={adSettings.adsense_client} placeholder="ca-pub-..."
+                class="block w-full rounded-md border border-border px-3 py-2 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand sm:text-sm bg-background font-mono" />
+            </div>
+
+            <div class="flex items-center gap-3 border-t border-border pt-6">
+              <input type="checkbox" id="enabled" name="enabled" checked={adSettings.enabled} 
+                class="size-4 rounded border-border text-brand focus:ring-brand bg-background" />
+              <div>
+                <label for="enabled" class="font-medium text-sm text-foreground">Enable Google Ads across the site</label>
+                <p class="text-xs text-muted-foreground">Master switch to turn off all ads temporarily.</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <input type="checkbox" id="auto_ads" name="auto_ads" checked={adSettings.auto_ads} 
+                class="size-4 rounded border-border text-brand focus:ring-brand bg-background" />
+              <div>
+                <label for="auto_ads" class="font-medium text-sm text-foreground">Enable Auto Ads</label>
+                <p class="text-xs text-muted-foreground">Let Google automatically place ads where they perform best.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-card border border-border rounded-xl p-6 shadow-sm space-y-6">
+            <h3 class="font-bold text-lg border-b border-border pb-2">Manual Ad Placements</h3>
+            <p class="text-sm text-muted-foreground">If Auto Ads is disabled, you can manually place specific ad units in these predefined locations.</p>
+
+            <div class="flex items-center gap-3">
+              <input type="checkbox" id="left_ad_enabled" name="left_ad_enabled" checked={adSettings.left_ad_enabled} 
+                class="size-4 rounded border-border text-brand focus:ring-brand bg-background" />
+              <div>
+                <label for="left_ad_enabled" class="font-medium text-sm text-foreground">Left Sidebar Ad</label>
+                <p class="text-xs text-muted-foreground">Shows a vertical banner on the left side of the TOTP generator.</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <input type="checkbox" id="right_ad_enabled" name="right_ad_enabled" checked={adSettings.right_ad_enabled} 
+                class="size-4 rounded border-border text-brand focus:ring-brand bg-background" />
+              <div>
+                <label for="right_ad_enabled" class="font-medium text-sm text-foreground">Right Sidebar Ad</label>
+                <p class="text-xs text-muted-foreground">Shows a vertical banner on the right side of the TOTP generator.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end">
+            <button type="submit" class="rounded-md bg-brand px-6 py-2 text-sm font-medium text-brand-foreground shadow-sm hover:bg-brand/90 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 transition-colors">
+              Save Settings
+            </button>
+          </div>
+        </form>
+</AdminLayout>

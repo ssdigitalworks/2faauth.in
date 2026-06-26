@@ -1,0 +1,36 @@
+---
+import LegalPage from '@/components/LegalPage.astro';
+import { getBlogPost } from '@/lib/db';
+import { marked } from 'marked';
+
+const { slug } = Astro.params;
+const post = await getBlogPost(slug as string);
+
+if (!post) {
+  return Astro.redirect('/404');
+}
+
+const parsedContent = marked.parse(post.content || '');
+
+const url = `/blog/${post.slug}`;
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.title,
+  description: post.excerpt,
+  url,
+  datePublished: post.date,
+  mainEntityOfPage: { "@type": "WebPage", "@id": url },
+  author: { "@type": "Organization", name: "2FA auth" },
+  publisher: { "@type": "Organization", name: "2FA auth" },
+};
+---
+
+<LegalPage jsonLd={jsonLd} title={post.title} intro={post.excerpt}>
+  <div set:html={parsedContent} class="prose prose-invert max-w-none font-body prose-headings:font-heading prose-a:text-brand hover:prose-a:text-brand/80" />
+  <p class="mt-12 font-body">
+    <a href="/blog" class="text-brand hover:underline text-sm">
+      &larr; Back to all posts
+    </a>
+  </p>
+</LegalPage>

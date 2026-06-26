@@ -1,0 +1,116 @@
+---
+import { Icon } from 'astro-icon/components';
+
+import { getSiteSettings, getNavItems } from '@/lib/db';
+
+const settings = await getSiteSettings();
+const navItems = await getNavItems();
+const visibleItems = navItems.filter(item => item.visible).sort((a, b) => a.order_index - b.order_index);
+---
+
+<nav class="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+  <div class="max-w-6xl mx-auto px-5 sm:px-6 h-14 flex items-center justify-between animate-fade-up">
+    <!-- Left side: Logo -->
+    <a href="/" class="flex items-center gap-2.5 font-bold tracking-tight text-foreground hover:opacity-80 transition font-heading">
+      <div class="grid h-8 w-8 place-items-center rounded-lg bg-brand text-brand-foreground glow-brand-subtle">
+        <Icon name="heroicons:key" class="size-4.5" />
+      </div>
+      <span class="text-lg font-heading">{settings.site_name}</span>
+    </a>
+
+    <!-- Right side: Links and Controls -->
+    <div class="flex items-center gap-5 sm:gap-6">
+      <div class="hidden md:flex items-center gap-5 sm:gap-6 text-sm font-medium text-muted-foreground">
+        {visibleItems.map((item) => (
+          <a
+            href={item.url}
+            target={item.url.startsWith("/") ? undefined : "_blank"}
+            rel={item.url.startsWith("/") ? undefined : "noopener noreferrer"}
+            class="text-[13px] text-muted-foreground hover:text-foreground transition-colors font-body"
+          >
+            {item.label}
+          </a>
+        ))}
+      </div>
+      
+      <button
+        id="nav-saved-btn"
+        aria-label="Open Saved Codes"
+        class="flex items-center gap-2 text-sm font-medium text-brand hover:text-brand/80 transition-colors bg-brand/10 hover:bg-brand/20 p-2 sm:px-3 sm:py-1.5 rounded-md font-body"
+      >
+        <Icon name="heroicons:bookmark" class="size-5 sm:size-4" />
+        <span class="hidden sm:inline">Saved Codes</span>
+      </button>
+
+      <button
+        id="theme-toggle"
+        aria-label="Toggle theme"
+        class="size-9 grid place-items-center rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+      >
+        <Icon name="heroicons:sun" class="size-5 hidden dark:block" />
+        <Icon name="heroicons:moon" class="size-5 block dark:hidden" />
+      </button>
+      <button
+        id="mobile-menu-toggle"
+        aria-label="Toggle menu"
+        class="md:hidden size-9 grid place-items-center rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+      >
+        <Icon name="heroicons:bars-3" class="size-5" id="icon-menu" />
+        <Icon name="heroicons:x-mark" class="size-5 hidden" id="icon-close" />
+      </button>
+    </div>
+  </div>
+  
+  <div id="mobile-menu" class="hidden md:hidden border-t border-border bg-background">
+    <div class="px-5 py-4 flex flex-col gap-4">
+      {visibleItems.map((item) => (
+        <a
+          href={item.url}
+          target={item.url.startsWith("/") ? undefined : "_blank"}
+          rel={item.url.startsWith("/") ? undefined : "noopener noreferrer"}
+          class="mobile-link text-sm font-medium text-foreground hover:text-primary transition-colors font-body"
+        >
+          {item.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</nav>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+  themeToggle?.addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('secure2fa:theme', isDark ? 'dark' : 'light');
+  });
+
+  // Mobile menu toggle
+  const menuToggle = document.getElementById('mobile-menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const iconMenu = document.getElementById('icon-menu');
+  const iconClose = document.getElementById('icon-close');
+
+  menuToggle?.addEventListener('click', () => {
+    mobileMenu?.classList.toggle('hidden');
+    iconMenu?.classList.toggle('hidden');
+    iconClose?.classList.toggle('hidden');
+  });
+
+  // Close mobile menu on link click
+  document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu?.classList.add('hidden');
+      iconMenu?.classList.remove('hidden');
+      iconClose?.classList.add('hidden');
+    });
+  });
+
+  // Saved Codes Drawer toggle
+  const savedBtn = document.getElementById('nav-saved-btn');
+  savedBtn?.addEventListener('click', () => {
+    document.dispatchEvent(new CustomEvent('tfa:open-drawer'));
+  });
+  });
+</script>

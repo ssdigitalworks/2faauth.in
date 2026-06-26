@@ -1,0 +1,38 @@
+---
+import LegalPage from '@/components/LegalPage.astro';
+import { getSiteSettings } from '@/lib/db';
+
+const settings = await getSiteSettings();
+const contactEmail = settings.contact_email && settings.contact_email !== 'support@example.com'
+  ? settings.contact_email
+  : 'ssdigitalworks01@gmail.com';
+
+const contactJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Contact — 2FA auth",
+  url: "https://2faauth.in/contact",
+  description: "Get in touch with the team behind 2FA auth.",
+  isPartOf: { "@type": "WebSite", name: "2FA auth", url: "https://2faauth.in" },
+};
+---
+
+<LegalPage
+  jsonLd={contactJsonLd}
+  title="Contact Us"
+  intro="Have a question, feedback, or need support? We'd love to hear from you."
+>
+  <h2>Get in touch</h2>
+  <p>
+    You can reach out to us for any inquiries, feature requests, or support related to 2FA auth. We strive to reply within 24-48 hours.
+  </p>
+  <ul>
+    <li><strong>Email:</strong> <a href={`mailto:${contactEmail}`}>{contactEmail}</a></li>
+  </ul>
+
+  <h2>Bug Reports &amp; Feedback</h2>
+  <p>
+    If you've found a bug, a layout issue on a specific device, or have an idea to improve the 2FA auth generator, please let us know! Since 2FA auth runs entirely inside your browser without any tracking, we rely on user reports to catch issues.
+  </p>
+</LegalPage>
+

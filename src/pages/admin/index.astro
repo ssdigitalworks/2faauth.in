@@ -1,0 +1,46 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { getAdSettings } from '@/lib/db';
+import { verifyAdminSession } from '@/lib/session';
+
+// Protect Route
+const sessionToken = Astro.cookies.get("admin_session")?.value;
+if (!await verifyAdminSession(sessionToken)) {
+  return Astro.redirect("/auth");
+}
+
+if (Astro.url.searchParams.has("logout")) {
+  Astro.cookies.delete("admin_session", { path: '/' });
+  return Astro.redirect("/auth");
+}
+
+const adSettings = await getAdSettings();
+const adsConfigured = Boolean(adSettings.enabled && adSettings.adsense_client);
+---
+
+<AdminLayout title="Dashboard | Admin" activeTab="dashboard">
+  <h1 class="text-3xl font-bold font-heading mb-6">Dashboard</h1>
+  
+  <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div class="rounded-xl border border-border bg-card p-6 shadow-sm">
+      <h3 class="font-medium text-muted-foreground mb-1 text-sm">Site Status</h3>
+      <p class="text-2xl font-bold text-emerald-500">Online</p>
+    </div>
+    <div class="rounded-xl border border-border bg-card p-6 shadow-sm">
+      <h3 class="font-medium text-muted-foreground mb-1 text-sm">AdSense Status</h3>
+      {adsConfigured
+        ? <p class="text-2xl font-bold text-emerald-500">Active</p>
+        : <p class="text-2xl font-bold text-muted-foreground">Not Configured</p>
+      }
+    </div>
+    <div class="rounded-xl border border-border bg-card p-6 shadow-sm">
+      <h3 class="font-medium text-muted-foreground mb-1 text-sm">Quick Links</h3>
+      <div class="flex flex-col gap-1 mt-1">
+        <a href="/admin/settings" class="text-sm text-brand hover:underline">→ Site Settings</a>
+        <a href="/admin/ads" class="text-sm text-brand hover:underline">→ AdSense</a>
+        <a href="/admin/navigation" class="text-sm text-brand hover:underline">→ Navigation</a>
+        <a href="/admin/blog" class="text-sm text-brand hover:underline">→ Blog</a>
+      </div>
+    </div>
+  </div>
+</AdminLayout>

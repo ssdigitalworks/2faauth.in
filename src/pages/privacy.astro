@@ -1,0 +1,60 @@
+---
+import LegalPage from '@/components/LegalPage.astro';
+
+const privacyJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Privacy Policy — 2FA auth",
+  url: "/privacy",
+  description:
+    "Zero-knowledge by design. No accounts, no analytics on your secrets, no server-side processing.",
+  isPartOf: { "@type": "WebSite", name: "2FA auth", url: "/" },
+};
+---
+
+<LegalPage
+  jsonLd={privacyJsonLd}
+  title="Privacy Policy"
+  intro="2FA auth is built around a single privacy promise: your secret keys and generated codes stay on your device. This page explains, in plain language, what data the site does and does not handle."
+>
+  <h2>What we don't collect</h2>
+  <ul>
+    <li>We never receive your TOTP secret keys.</li>
+    <li>We never receive the 6-digit codes generated from them.</li>
+    <li>We never receive your QR codes or otpauth:// URIs.</li>
+  </ul>
+  <p>
+    All TOTP math (HMAC-SHA1, time-step, truncation) runs locally in your browser using the Web
+    Crypto API. There is no API call to a server when you generate or refresh a code.
+  </p>
+
+  <h2>What is processed automatically</h2>
+  <p>
+    Like any website, our hosting provider sees standard HTTP request metadata (IP address,
+    user agent, requested path, timestamp) in their server logs for the purpose of delivering
+    the site and protecting against abuse. We do not link this data to any identity.
+  </p>
+
+  <h2>Cookies</h2>
+  <p>
+    2FA auth does not set tracking cookies. The site may store small non-identifying
+    preferences (such as your light/dark theme choice) in your browser's local storage. This
+    data never leaves your device.
+  </p>
+
+  <h2>Third parties</h2>
+  <p>
+    We do not embed third-party trackers, advertising pixels, or social media widgets that
+    receive your activity on this site.
+  </p>
+
+  <h2>Children</h2>
+  <p>
+    2FA auth is a general-purpose technical tool and is not directed at children under 13.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Questions about this policy? Reach out through the contact channel listed on the About page.
+  </p>
+</LegalPage>
